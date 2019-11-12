@@ -1,0 +1,29 @@
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="/config.js"></script>
+<script>
+    gapi.load('client:auth2', init);
+    async function init() {
+        let params = {
+            // 'apiKey': API_KEY,
+            'clientId': CLIENT_ID,
+            'scope': 'https://www.googleapis.com/auth/drive',
+        }
+        await gapi.client.init(params);
+        GoogleAuth = gapi.auth2.getAuthInstance();
+        console.log(GoogleAuth.currentUser.get())
+        await fetch();
+    }
+    async function fetch() {
+        try {
+            const data = await gapi.client.request('https://www.googleapis.com/oauth2/v2/userinfo');
+            console.log("Data::", data);
+            const body = JSON.parse(data.body);
+            console.log("Email::", body.email);
+            document.write(`Logged in user email is <b><i>${body.email}</i></b>`);
+        } catch (err) {
+            console.log("ERR::", err);
+            const body = JSON.parse(err.body);
+            document.write(`ERR::${body.error.message}`)
+        }
+    }
+</script>
